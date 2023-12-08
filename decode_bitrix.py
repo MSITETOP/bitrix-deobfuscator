@@ -1,7 +1,7 @@
-
 import base64
 import sys
 import re
+import os
 
 def read_input_file(file_path):
     """
@@ -72,12 +72,11 @@ def decode_and_replace_globals(php_code, globals_object):
     Returns:
     str: The PHP code with decoded and replaced strings.
     """
-    encoded_strings = php_code.split("base64_decode('")[1:] 
-    for index, string in enumerate(encoded_strings):
-        base64_str = string.split("')")[0]
+    encoded_strings = re.findall(r"base64_decode\('(.*?)'\)", php_code)
+    for index, base64_str in enumerate(encoded_strings):
         decoded_str = decode_base64(base64_str)
         php_code = php_code.replace(f"base64_decode('{base64_str}')", f"'{decoded_str}'")    
-        php_code = php_code.replace(f"\$GLOBALS['{globals_object}'][{index}]", decoded_str)
+        php_code = php_code.replace(f"$GLOBALS['{globals_object}'][{index}]", decoded_str)
     return php_code
 
 
@@ -117,11 +116,12 @@ def deobfuscate_php(file_path):
     function_name = re.findall(r'\\___(\d+)', php_code)[0]
     php_code = decode_and_replace_function(php_code, extracted_function_list, function_name)
     php_code = php_code.replace(";", ";\r").replace("',", "',\r")
+    #php_code = re.sub(r"die\(GetMessage\(.+\)\)", "continue", php_code)
+    os.rename(file_path, f"{file_path}_old")
     
-    output_file_path = f"{file_path}.decode.php"
-    write_output_file(output_file_path, php_code)
+    write_output_file(file_path, php_code)
     
-    return output_file_path
+    return file_path
 
 def main(file_path):
     try:
