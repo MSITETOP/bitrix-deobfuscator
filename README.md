@@ -22,7 +22,7 @@ python decode_bitrix.py path/to/your/file.php
 python decode_bitrix.py obfuscated_file.php
 ```
 
-После выполнения скрипта будет создан новый `obfuscated_file.php` с деобфускированным содержимым, исходный файл будет сохранен с именем `obfuscated_file.php_old`
+После выполнения скрипта будет создан новый файл `obfuscated_file.php` с деобфускированным содержимым, исходный файл будет сохранен с именем `obfuscated_file.php_old`
 
 ## Лицензия
 [MIT](LICENSE)
